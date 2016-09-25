@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>React Random Quote Machine</title>
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
+  <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+</head>
+<body>
+  <div id="container"></div>
+  <script type="text/babel">
+    var QuoteBox = React.createClass({
+      render: function() {
+        return (
+          <div>
+            <p>awesome</p>
+            <p className="text-right">awesome</p>
+
+          </div>
+        );
+      }
+    });
+
+    var QuoteMachine = React.createClass({
+      render: function() {
+        return (
+          <div className="inner well clearfix">
+            <QuoteBox />
+            <button className="btn btn-default pull-left">Tweet</button>
+            <button className="btn btn-default pull-right">New Quote</button>
+
+          </div>
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <QuoteMachine />,
+      document.getElementById("container")
+    );
+
+  </script>
+</body>
+</html>
