@@ -1,0 +1,64 @@
+var QuoteBox = React.createClass({
+      render: function() {
+        return (
+          <div>
+            <p>{this.props.quote}</p>
+            <p className="text-right">{this.props.author}</p>
+          </div>
+        );
+      }
+    });
+
+    var QuoteMachine = React.createClass({
+      getInitialState: function() {
+        return {
+          quotesData: {}
+        }
+      },
+
+      componentDidMount: function() {
+        axios.get(this.props.source)
+        .then(result => {
+            //console.log(result.data[0]);
+            this.setState({quotesData: result.data[0]});  
+          });
+
+      },
+      
+      getRandomQuote: function() {
+        var str = Math.floor(Math.random() * 2000) + 1000;
+        var quotesResult = {};
+        quotesResult.content = "Random Error. Click Once more";
+        quotesResult.title = "Random Error";
+        axios.get("http://quotesondesign.com/wp-json/posts/"+str)
+        .then(result => {
+          console.log(result);
+          this.setState({quotesData: result.data});  
+          // if(result.data instanceof Array) {
+          //   this.setState({quotesData: quotesResult});
+          // } else {
+          //   this.setState({quotesData: result.data});  
+          // }
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({quotesData: quotesResult});
+        });
+      },
+
+      render: function() {
+        //var quotequote = this.state.quotesData.content.slice(3,-5);
+        return (
+          <div className="inner well clearfix">
+            <QuoteBox quote={this.state.quotesData.content} author={this.state.quotesData.title} />
+            <button className="btn btn-default pull-left">Tweet</button>
+            <button className="btn btn-default pull-right" onClick={this.getRandomQuote}>New Quote</button>
+          </div>
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <QuoteMachine source="http://quotesondesign.com/wp-json/posts?filter[orderby]=randfilter[posts_per_page]=1"/>,
+      document.getElementById("container")
+    );
