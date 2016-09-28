@@ -9,6 +9,7 @@
   <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
   <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
   <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.14.0/axios.min.js"></script>
 </head>
 <body>
   <div id="container"></div>
@@ -17,8 +18,8 @@
       render: function() {
         return (
           <div>
-            <p>awesome</p>
-            <p className="text-right">awesome</p>
+            <p>{this.props.quote}</p>
+            <p className="text-right">{this.props.author}</p>
 
           </div>
         );
@@ -26,10 +27,65 @@
     });
 
     var QuoteMachine = React.createClass({
+      getInitialState: function() {
+        return {
+          quotesData: []
+        }
+      },
+
+      componentDidMount: function() {
+        var str = 1743;
+        axios.get(this.props.source)
+        .then(result => {
+            this.setState({quotesData: result.data});
+            //console.log(result.data);
+        })
+        .catch(result => {
+          if(result instanceof Error) {
+            console.log(result);
+          } else {
+            this.setState({quotesData: result.data});
+          }
+        });
+        // var request = new Request(this.props.source, {
+        //   method: 'GET',
+        //   mode: 'no-cors',
+        //   redirect: 'follow',
+        //   headers: new Headers({
+        //   	'Content-Type': 'application/json'
+        //   })
+        // });
+        // Using fetchJsonp throws arsing failed TypeError: r.indexOf is not a function(…)
+        // fetchJsonp(request)
+        // .then(response => {
+        //   return response.json();
+        // }).then(json => {
+        //   console.log(json);
+        // }).catch(function(ex) {
+        //   console.log('parsing failed', ex);
+        // });
+        // Using fetch throws Unexpected end of input
+        // fetch(request)
+        // .then(response => {
+        //   return response.json();
+        // })
+        // .then(js => {
+        //   this.setState({quotesData: js});
+        //   //console.log(Object.getOwnPropertyNames(this.state.quotesData));
+        // })
+        // .catch(function(error) {
+        //   console.log(error.message);
+        // });
+
+      },
+
       render: function() {
+        // var quoteContainer = this.state.quotesData.map(function(quotes) {
+        //   return <QuoteBox quote={quotes.content.slice(3,-5)} author={quotes.title}/>;
+        //   }.bind(this));
         return (
           <div className="inner well clearfix">
-            <QuoteBox />
+            <QuoteBox quote={this.state.quotesData.content} author={this.state.quotesData.title}/>
             <button className="btn btn-default pull-left">Tweet</button>
             <button className="btn btn-default pull-right">New Quote</button>
 
@@ -39,7 +95,7 @@
     });
 
     ReactDOM.render(
-      <QuoteMachine />,
+      <QuoteMachine source="http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&"/>,
       document.getElementById("container")
     );
 
