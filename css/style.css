@@ -1,8 +1,12 @@
 body {
-  background-color: #D6E6C3;
+  background-color: #CFF09E;
+}
+.butt {
+  background-color: #CFF09E;
 }
 .inner {
   margin: 100px 20% 100px 20%;
   padding: 50px;
   background-color: #FCFEF5;
+  border-radius: 10px;
 } */

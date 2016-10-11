@@ -26,7 +26,9 @@ var QuoteMachine = React.createClass({
 
   getInitialState: function getInitialState() {
     return {
-      quotesData: {}
+      quotesData: [],
+      quote: "",
+      author: ""
     };
   },
 
@@ -34,50 +36,47 @@ var QuoteMachine = React.createClass({
     var _this = this;
 
     axios.get(this.props.source).then(function (result) {
-      //console.log(result.data[0]);
-      _this.setState({ quotesData: result.data[0] });
+      _this.setState({ quotesData: result.data });
+      _this.setState({ quote: _this.state.quotesData[1].content.slice(3, -5) });
+      _this.setState({ author: _this.state.quotesData[1].title });
+    }).catch(function (error) {
+      console.log(error);
     });
   },
 
-  getRandomQuote: function getRandomQuote() {
-    var _this2 = this;
+  getRandomQuote: function getRandomQuote(event) {
+    var rnd = Math.floor(Math.random() * 5);
+    this.setState({ quote: this.state.quotesData[rnd].content.slice(3, -5) });
+    this.setState({ author: this.state.quotesData[rnd].title });
+    document.body.style.backgroundColor = '#A8DBA8';
+    document.getElementById("tweet").style.backgroundColor = '#A8DBA8';
+    document.getElementById("new").style.backgroundColor = '#A8DBA8';
+  },
 
-    var str = Math.floor(Math.random() * 2000) + 1000;
-    var quotesResult = {};
-    quotesResult.content = "Random Error. Click Once more";
-    quotesResult.title = "Random Error";
-    axios.get("http://quotesondesign.com/wp-json/posts/" + str).then(function (result) {
-      console.log(result);
-      _this2.setState({ quotesData: result.data });
-      // if(result.data instanceof Array) {
-      //   this.setState({quotesData: quotesResult});
-      // } else {
-      //   this.setState({quotesData: result.data}); 
-      // }
-    }).catch(function (error) {
-      console.log(error);
-      _this2.setState({ quotesData: quotesResult });
-    });
+  tweetIt: function tweetIt(event) {
+    var quoteTweet = this.state.quote;
+    var auth = this.state.author;
+    quoteTweet = quoteTweet.replace(/;/g, '%3b');
+    window.open('https://twitter.com/intent/tweet?text="' + quoteTweet + '" -' + auth + '&hashtags=quotes');
   },
 
   render: function render() {
-    //var quotequote = this.state.quotesData.content.slice(3,-5);
     return React.createElement(
       "div",
       { className: "inner well clearfix" },
-      React.createElement(QuoteBox, { quote: this.state.quotesData.content, author: this.state.quotesData.title }),
+      React.createElement(QuoteBox, { quote: this.state.quote, author: this.state.author }),
       React.createElement(
         "button",
-        { className: "btn btn-default pull-left" },
+        { id: "tweet", className: "btn btn-default pull-left butt", onClick: this.tweetIt },
         "Tweet"
       ),
       React.createElement(
         "button",
-        { className: "btn btn-default pull-right", onClick: this.getRandomQuote },
+        { id: "new", className: "btn btn-default pull-right butt", onClick: this.getRandomQuote },
         "New Quote"
       )
     );
   }
 });
 
-ReactDOM.render(React.createElement(QuoteMachine, { source: "http://quotesondesign.com/wp-json/posts?filter[orderby]=randfilter[posts_per_page]=1" }), document.getElementById("container"));
+ReactDOM.render(React.createElement(QuoteMachine, { source: "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=5" }), document.getElementById("container"));
